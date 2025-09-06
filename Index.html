@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHORD</title>
+  <script>
+    document.oncontextmenu = () => {
+      return false;
+    };
+
+    var screenHeight = screen.height;
+    var screenWidth = screen.width;
+    var btnHeight = 0;
+    var btnWidth = 0;
+
+    const defChordName = ['M', 'm', 'maj7', '7th', 'm7', 'mM7', 'sus4', '7sus4', '6th', 'm6', 'aug', 'dim', 'dim7', 'm7(♭5)', 'add9', 'madd9', 'maj7(9)', '7(9)', 'm7(9)', '7(♯9)', 'maj7(13)', '7(13)', '7(♭13)', 'none'];
+    var chordName = defChordName;
+    const chordValue = {
+      'M':[0,4,7,null,null],
+      'm':[0,3,7,null,null],
+      'maj7':[0,4,7,0,null],
+      '7th':[0,4,7,9,null],
+      'm7':[0,3,7,9,null],
+      'mM7':[0,3,7,10,null],
+      'sus4':[0,5,7,null,null],
+      '7sus4':[0,5,7,9,null],
+      '6th':[0,4,7,9,null],
+      'm6':[0,3,7,9,null],
+      'aug':[0,4,8,null,null],
+      'dim':[0,3,6,null,null],
+      'dim7':[1,4,7,10,null],
+      'm7(♭5)':[0,3,6,10,null],
+      'add9':[0,2,4,7,null],
+      'madd9':[0,2,3,7,null],
+      'maj7(9)':[0,2,4,7,10],
+      '7(9)':[0,2,4,7,9,10],
+      'm7(9)':[0,2,3,7,10],
+      '7(♯9)':[0,3,4,7,10],
+      'maj7(13)':[0,4,7,9,11],
+      '7(13)':[0,4,7,9,10],
+      '7(♭13)':[0,4,7,8,10],
+      'none':[null,null,null,null,null]
+    };
+    const chordNo = ['c01', 'c02', 'c03', 'c04', 'c05', 'c06', 'c07', 'c08', 'c09', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24'];
+    const wKey = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+    const bKey = ['C#', 'D#', 'F#', 'G#', 'A#'];
+    const allKey = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const frqList = [261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392.00, 415.30, 440.00, 466.16, 493.88];
+
+    function fncLoad() {
+      fncResize();
+    }
+  
+    function fncResize() {
+      screenHeight = screen.height;
+      screenWidth = screen.width;
+
+      if (screenHeight >= screenWidth) {
+        screenHeight = window.innerHeight;
+        screenWidth = window.innerWidth;
+
+        var es = document.getElementById('start');
+        es.style.position = 'fixed';
+        es.style.height = Math.floor(screenHeight / 2) + 'px';
+        es.style.width = Math.floor(screenWidth / 2) + 'px';
+        es.style.top = Math.floor(screenHeight / 4) + 'px';
+        es.style.left = Math.floor(screenWidth / 4) + 'px';
+
+        var addBoxHeight = screenHeight;
+        var addBoxWidth = Math.floor(screenWidth * 0.1);
+        var addBoxTop = 0;
+        var addBoxLeft = screenWidth - addBoxWidth;
+        screenWidth = window.innerWidth - addBoxWidth;
+
+        document.getElementById('add-box').style.position = 'fixed';
+        document.getElementById('add-box').style.top = addBoxTop + 'px';
+        document.getElementById('add-box').style.left = addBoxLeft + 'px';
+        document.getElementById('add-box').style.height = addBoxHeight + 'px';
+        document.getElementById('add-box').style.width = addBoxWidth + 'px';
+
+        var keyBoxHeight = Math.floor(screenHeight * 0.7);
+        var keyBoxWidth = screenWidth;
+        var keyBoxTop = 0;
+        var keyBoxLeft = 0;
+
+        var btnBoxHeight = screenHeight - keyBoxHeight;
+        var btnBoxWidth = screenWidth;
+        var btnBoxTop = keyBoxHeight;
+        var btnBoxLeft = 0;
+        var btnColSize = 3;
+
+        document.getElementById('key-box').style.position = 'fixed';
+        document.getElementById('key-box').style.top = keyBoxTop + 'px';
+        document.getElementById('key-box').style.left = keyBoxLeft + 'px';
+        document.getElementById('key-box').style.height = keyBoxHeight + 'px';
+        document.getElementById('key-box').style.width = keyBoxWidth + 'px';
+
+        document.getElementById('btn-box').style.position = 'fixed';
+        document.getElementById('btn-box').style.top = btnBoxTop + 'px';
+        document.getElementById('btn-box').style.left = btnBoxLeft + 'px';
+        document.getElementById('btn-box').style.height = btnBoxHeight + 'px';
+        document.getElementById('btn-box').style.width = btnBoxWidth + 'px';
+
+        var wWidth = keyBoxWidth;
+        var bWidth = wWidth - Math.floor(wWidth / 2);
+
+        var wTempHeight = 0;
+        var wTempHeightRest = 0;
+        var wHeight =  [0,0,0,0,0,0,0];
+        var bHeight = [0,0,0,0,0];
+
+        wTempHeight = Math.floor(keyBoxHeight / 7);
+        wTempHeightRest = keyBoxHeight - (wTempHeight * 7);
+
+        for (i = 0; i < wHeight.length; i++) {
+          wHeight[i] =  wTempHeight;
+        }
+        for (i = 0; i < wTempHeightRest; i++) {
+          wHeight[Math.floor(i % 7)] = wHeight[Math.floor(i % 7)] + 1;
+        }
+
+        for (i = 0; i < bHeight.length; i++) {
+          bHeight[i] = Math.floor(wHeight[0] / 2);
+        }
+
+        var tempTop = 0;
+        for (i = 0; i < wHeight.length; i++) {
+          var e = document.getElementById(wKey[i]);
+          e.style.position = 'absolute';
+          e.style.top = (tempTop) + 'px';
+          e.style.left = '0px';
+          e.style.height = wHeight[i] + 'px';
+          e.style.width = wWidth + 'px';
+          tempTop = tempTop + wHeight[i];
+        }
+
+        for (i = 0; i < bKey.length; i++) {
+          var eb = document.getElementById(bKey[i]);
+          var ew = document.getElementById(bKey[i].substring(0, 1));
+          eb.style.position = 'absolute';
+          eb.style.top = (Number(ew.style.top.replace('px', '')) + Math.floor(wHeight[0] / 4) * 3) + 'px';
+          eb.style.left = (keyBoxWidth - bWidth) + 'px';
+          eb.style.height = (Math.floor(wHeight[0] / 2)) + 'px';
+          eb.style.width = bWidth + 'px';
+        }
+
+        btnHeight = Math.floor(btnBoxHeight / (chordNo.length / btnColSize));
+        btnWidth = Math.floor(btnBoxWidth / btnColSize);
+        btnHeight = Math.floor(btnBoxHeight / btnColSize);
+        btnWidth = Math.floor(btnBoxWidth / (chordNo.length / btnColSize));
+
+        for (i = 1; i <= chordName.length; i++) {
+          var e = document.getElementById('c' + String(i).padStart(2, '0'));
+          var tempTop = 0;
+          var tempLeft = btnBoxWidth - btnWidth;
+
+          e.style.position = 'absolute';
+          tempTop = (btnHeight * ((i - 1) % btnColSize)) + Math.floor(btnHeight * (1 / 10));
+          tempLeft = btnBoxWidth - (btnWidth * (Math.floor((i - 1) / btnColSize) + 1));
+          e.style.top = tempTop + 'px';
+          e.style.left = tempLeft + 'px';
+          e.style.height = Math.floor(btnHeight * (6 / 10)) + 'px';
+          e.style.width = Math.floor(btnWidth * (8 / 10)) + 'px';
+          e.style.lineHeight = e.style.height;
+          e.style.textAlign = 'center';
+          e.innerHTML = chordName[i - 1].replace('none', '');
+          e.classList.add('rotated-text');
+        }
+      }
+      else {
+        screenHeight = Math.floor(window.innerHeight * 0.98);
+        screenWidth = window.innerWidth;
+
+        var es = document.getElementById('start');
+        es.style.position = 'fixed';
+        es.style.height = Math.floor(screenHeight / 2) + 'px';
+        es.style.width = Math.floor(screenWidth / 2) + 'px';
+        es.style.top = Math.floor(screenHeight / 4) + 'px';
+        es.style.left = Math.floor(screenWidth / 4) + 'px';
+
+        var addBoxHeight = Math.floor(screenHeight * 0.1);
+        var addBoxWidth = screenWidth;
+        var addBoxTop = 0;
+        var addBoxLeft = 0;
+
+        document.getElementById('add-box').style.position = 'fixed';
+        document.getElementById('add-box').style.top = addBoxTop + 'px';
+        document.getElementById('add-box').style.left = addBoxLeft + 'px';
+        document.getElementById('add-box').style.height = addBoxHeight + 'px';
+        document.getElementById('add-box').style.width = addBoxWidth + 'px';
+        screenHeight = screenHeight - addBoxHeight;
+
+        var keyBoxHeight = screenHeight;
+        var keyBoxWidth = Math.floor(screenWidth * 0.7);
+        var keyBoxTop = addBoxHeight;
+        var keyBoxLeft = 0;
+
+        var btnBoxHeight = screenHeight;
+        var btnBoxWidth = screenWidth - keyBoxWidth;
+        var btnBoxTop = addBoxHeight;
+        var btnBoxLeft = keyBoxWidth;
+        var btnColSize = 3;
+
+        document.getElementById('key-box').style.position = 'fixed';
+        document.getElementById('key-box').style.top = keyBoxTop + 'px';
+        document.getElementById('key-box').style.left = keyBoxLeft + 'px';
+        document.getElementById('key-box').style.height = keyBoxHeight + 'px';
+        document.getElementById('key-box').style.width = keyBoxWidth + 'px';
+
+        document.getElementById('btn-box').style.position = 'fixed';
+        document.getElementById('btn-box').style.top = btnBoxTop + 'px';
+        document.getElementById('btn-box').style.left = btnBoxLeft + 'px';
+        document.getElementById('btn-box').style.height = btnBoxHeight + 'px';
+        document.getElementById('btn-box').style.width = btnBoxWidth + 'px';
+
+        btnHeight = Math.floor(btnBoxHeight / (chordNo.length / btnColSize));
+        btnWidth = Math.floor(btnBoxWidth / btnColSize);
+
+        for (i = 1; i <= chordName.length; i++) {
+          var e = document.getElementById('c' + String(i).padStart(2, '0'));
+          var tempTop = Math.floor((i - 1) / btnColSize) * btnHeight;
+          var tempLeft = ((  (i - 1) % btnColSize  ) * btnWidth) + Math.floor(btnWidth * (1 / 10));
+
+          e.style.position = 'absolute';
+
+          e.style.top = tempTop + 'px';
+          e.style.left = tempLeft + 'px';
+          e.style.height = Math.floor(btnHeight * (8 / 10)) + 'px';
+          e.style.width = Math.floor(btnWidth * (8 / 10)) + 'px';
+          e.style.lineHeight = e.style.height;
+          e.style.textAlign = 'center';
+
+          e.classList.remove('rotated-text');
+          e.innerHTML = chordName[i - 1];
+        }
+
+        var wHeight = keyBoxHeight;
+        var bHeight = wHeight - Math.floor(wHeight / 2);
+
+        var wTempWidth = 0;
+        var wTempWidthRest = 0;
+        var wWidth =  [0,0,0,0,0,0,0];
+        var bWidth = [0,0,0,0,0];
+
+        wTempWidth = Math.floor(keyBoxWidth / 7);
+        wTempWidthRest = keyBoxWidth - (wTempWidth * 7);
+
+        for (i = 0; i < wWidth.length; i++) {
+          wWidth[i] =  wTempWidth;
+        }
+        for (i = 0; i < wTempWidthRest; i++) {
+          wWidth[Math.floor(i % 7)] = wWidth[Math.floor(i % 7)] + 1;
+        }
+
+        for (i = 0; i < bWidth.length; i++) {
+          bWidth[i] = Math.floor(wWidth[0] / 2);
+        }
+
+        var tempLeft = 0;
+        for (i = 0; i < wWidth.length; i++) {
+          var e = document.getElementById(wKey[i]);
+          e.style.position = 'absolute';
+          e.style.top = '0px';
+          e.style.left = tempLeft + 'px';
+          e.style.height = wHeight + 'px';
+          e.style.width = wWidth[i] + 'px';
+          tempLeft = tempLeft + wWidth[i];
+        }
+
+        for (i = 0; i < bKey.length; i++) {
+          var eb = document.getElementById(bKey[i]);
+          var ew = document.getElementById(bKey[i].substring(0, 1));
+          eb.style.position = 'absolute';
+          eb.style.top = '0px';
+          eb.style.left = (Number(ew.style.left.replace('px', '')) + Math.floor(wWidth[0] / 4) * 3) + 'px';
+          eb.style.height = bHeight + 'px';
+          eb.style.width = (Math.floor(wWidth[0] / 2)) + 'px';
+        }
+      }
+    }
+
+    var selKey = '';
+    var selChord = '';
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+    var osc = [null, null, null, null, null, null];
+
+    function playNote(key, chord) {
+      if (key == '') {
+        return;
+      }
+
+      var keyIdx = 0;
+      for (i = 0; i < allKey.length; i++) {
+        if (key == allKey[i]) {
+          keyIdx = i;
+          break;
+        }
+      }
+
+      var notes = [];
+      for (i = 0; i < chordNo.length; i++) {
+        if (chord == chordNo[i]) {
+          notes = getNoteSets(i);
+          break;
+        }
+      }
+
+      if (notes.length == 0) {
+        notes = [0];
+      }
+
+      for (i = 0; i < notes.length; i++) {
+        notes[i] = getNote(notes[i] + keyIdx);
+      }
+
+      const gain = audioCtx.createGain();
+
+      gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+
+      for (i = 0; i < notes.length; i++) {
+        if (osc[i] != null) {
+          osc[i].stop(audioCtx.currentTime);
+          osc[i] = null;
+        }
+        if (notes[i] == null) {
+          continue;
+        }
+        osc[i] = audioCtx.createOscillator();
+        osc[i].type = 'sawtooth'; // 波形: sine, square, triangle, sawtooth など
+        osc[i].frequency.value = frqList[notes[i]];
+
+        osc[i].connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc[i].start();
+      }
+    }
+
+    function getNoteSets(idx) {
+      var ret = [];
+      var keys = Object.keys(chordValue);
+      for (i = 0; i < keys.length; i++) {
+        if (keys[i] == chordName[idx]) {
+          for (j = 0; j < chordValue[keys[i]].length; j++) {
+            ret[j] = chordValue[keys[i]][j];
+          }
+          break;
+        }
+      }
+      return ret;
+    }
+
+    function getNote(val) {
+      if (val == null) return null;
+      if (val <= 11) return val;
+      else return val - 12;
+    }
+
+    function doEvent(isStart) {
+        if (isStart) {
+          playNote(selKey, selChord);
+        }
+        else {
+          for (i = 0; i < osc.length; i++) {
+            if (osc[i] != null) {
+              osc[i].stop(audioCtx.currentTime);
+              osc[i] = null;
+            }
+          }
+        }
+    }
+  </script>
+  <style>
+    body {
+      margin: 0;
+      touch-action: pan-x pan-y;
+    }
+
+    .no_select {
+      user-select: none;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+
+    #btn-box {
+      z-index: 1;
+      border-bottom-left-bottom-right: 0px;
+    }
+
+    #key-box {
+      z-index: 1;
+      border-bottom-left-bottom-right: 0px;
+    }
+
+    .chord-btn {
+      background-color:#e0e0e0;
+      color: #333;
+      padding: 2px 2px;
+      border: none;
+      border-radius: 6px;
+      font-size: 90%;
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        0 4px 6px rgba(0, 0, 0, 0.1),
+        0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .white-key {
+      background: white;
+      border: 1px solid black;
+      z-index: 2;
+      box-sizing: border-box;
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        0 4px 6px rgba(0, 0, 0, 0.1),
+        0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .black-key {
+      background: black;
+      z-index: 3;
+      box-sizing: border-box;
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        0 4px 6px rgba(0, 0, 0, 0.1),
+        0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .rotated-text {
+      transform: rotate(90deg);
+    }
+  </style>
+</head>
+<body style="position:absolute; top:0px;left:0px;" onload="fncLoad()" onresize="fncResize()" class="no_select">
+  <div id="start" style="display:block;">
+    <table border="0" height="100%" width="100%" style="position:related;">
+      <tr>
+        <td align="center" valign="middle">
+          This page has sound.
+        </td>
+      </tr>
+      <tr>
+        <td align="center" valign="middle">
+          <input type="button" value="OK" onclick="showMain()">
+          <script>
+            function showMain() {
+              document.getElementById('start').style.display = 'none';
+              document.getElementById('main').style.display = 'block';
+            }
+          </script>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="main" style="display:none;">
+    <div id="add-box">
+    </div>
+    <div id="btn-box">
+      <div class="chord-btn" id="c01" data-note="c01"></div>
+      <div class="chord-btn" id="c02" data-note="c02"></div>
+      <div class="chord-btn" id="c03" data-note="c03"></div>
+      <div class="chord-btn" id="c04" data-note="c04"></div>
+      <div class="chord-btn" id="c05" data-note="c05"></div>
+      <div class="chord-btn" id="c06" data-note="c06"></div>
+      <div class="chord-btn" id="c07" data-note="c07"></div>
+      <div class="chord-btn" id="c08" data-note="c08"></div>
+      <div class="chord-btn" id="c09" data-note="c09"></div>
+      <div class="chord-btn" id="c10" data-note="c10"></div>
+      <div class="chord-btn" id="c11" data-note="c11"></div>
+      <div class="chord-btn" id="c12" data-note="c12"></div>
+      <div class="chord-btn" id="c13" data-note="c13"></div>
+      <div class="chord-btn" id="c14" data-note="c14"></div>
+      <div class="chord-btn" id="c15" data-note="c15"></div>
+      <div class="chord-btn" id="c16" data-note="c16"></div>
+      <div class="chord-btn" id="c17" data-note="c17"></div>
+      <div class="chord-btn" id="c18" data-note="c18"></div>
+      <div class="chord-btn" id="c19" data-note="c19"></div>
+      <div class="chord-btn" id="c20" data-note="c20"></div>
+      <div class="chord-btn" id="c21" data-note="c21"></div>
+      <div class="chord-btn" id="c22" data-note="c22"></div>
+      <div class="chord-btn" id="c23" data-note="c23"></div>
+      <div class="chord-btn" id="c24" data-note="c24" style="display:none;"></div>
+    </div>    
+    <div id="key-box">
+      <div class="white-key" id="C" data-note="C"></div>
+      <div class="black-key" id="C#" data-note="C#"></div>
+      <div class="white-key" id="D" data-note="D"></div>
+      <div class="black-key" id="D#" data-note="D#"></div>
+      <div class="white-key" id="E" data-note="E"></div>
+      <div class="white-key" id="F" data-note="F"></div>
+      <div class="black-key" id="F#" data-note="F#"></div>
+      <div class="white-key" id="G" data-note="G"></div>
+      <div class="black-key" id="G#" data-note="G#"></div>
+      <div class="white-key" id="A" data-note="A"></div>
+      <div class="black-key" id="A#" data-note="A#"></div>
+      <div class="white-key" id="B" data-note="B"></div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.white-key, .black-key, .chord-btn').forEach(key => {
+      key.addEventListener('touchstart', (e) => {
+        const note = key.dataset.note;
+        if (chordNo.indexOf(note) > -1) {
+          if (selChord != '') {
+            return;
+          }
+          selChord = note;
+          document.getElementById(note).style.backgroundColor = '#fff0f5';
+        }
+        else if (allKey.indexOf(note) > -1) {
+          if (selKey != '') {
+            return;
+          }
+          selKey = note;
+          document.getElementById(note).style.backgroundColor = '#fff0f5';
+          document.getElementById(note).style.border = '0px';
+        }
+        else {
+          return;
+        }
+        doEvent(true);
+      });
+    });
+
+    document.querySelectorAll('.white-key, .black-key, .chord-btn').forEach(key => {
+      key.addEventListener('touchend', (e) => {
+        const note = key.dataset.note;
+        if (chordNo.indexOf(note) > -1) {
+          if (selChord != note) {
+            return;
+          }
+          selChord = "";
+          document.getElementById(note).style.backgroundColor = '#e0e0e0';
+        }
+        else if (allKey.indexOf(note) > -1) {
+          if (selKey != note) {
+            return;
+          }
+          selKey = '';
+          if (note.indexOf('#') > -1) {
+            document.getElementById(note).style.backgroundColor = '#000';
+          }
+          else {
+            document.getElementById(note).style.backgroundColor = '#fff';
+            document.getElementById(note).style.border = '1px solid black';
+          }
+        }
+        else {
+          return;
+        }
+        doEvent(false);
+      });
+    });
+
+    window.addEventListener('orientationchange', function() {
+      fncResize();
+    });
+  </script>
+</body>
+</html>
