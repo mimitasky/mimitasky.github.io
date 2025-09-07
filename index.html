@@ -166,6 +166,7 @@
           e.style.textAlign = 'center';
           e.innerHTML = chordName[i - 1].replace('none', '');
           e.classList.add('rotated-text');
+          e.style.fontSize = Math.min(e.offsetWidth, e.offsetHeight) * 0.3 + 'px';
         }
       }
       else {
@@ -233,6 +234,7 @@
 
           e.classList.remove('rotated-text');
           e.innerHTML = chordName[i - 1];
+          e.style.fontSize = Math.min(e.offsetWidth, e.offsetHeight) * 0.4 + 'px';
         }
 
         var wHeight = keyBoxHeight;
@@ -401,11 +403,16 @@
       padding: 2px 2px;
       border: none;
       border-radius: 6px;
-      font-size: 90%;
+      font-size: initial;
+      overflow: hidden;
       box-shadow: 
         inset 0 1px 0 rgba(255, 255, 255, 0.6),
         0 4px 6px rgba(0, 0, 0, 0.1),
         0 1px 3px rgba(0, 0, 0, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
     }
 
     .white-key {
@@ -451,6 +458,7 @@
             function showMain() {
               document.getElementById('start').style.display = 'none';
               document.getElementById('main').style.display = 'block';
+              fncResize();
             }
           </script>
         </td>
