@@ -10,38 +10,38 @@
       return false;
     };
 
-    var screenHeight = screen.height;
-    var screenWidth = screen.width;
+    var screenHeight = window.innerHeight;
+    var screenWidth = window.innerWidth;
     var btnHeight = 0;
     var btnWidth = 0;
 
-    const defChordName = ['M', 'm', 'maj7', '7th', 'm7', 'mM7', 'sus4', '7sus4', '6th', 'm6', 'aug', 'dim', 'dim7', 'm7(♭5)', 'add9', 'madd9', 'maj7(9)', '7(9)', 'm7(9)', '7(♯9)', 'maj7(13)', '7(13)', '7(♭13)', 'none'];
+    const defChordName = ['M', 'm', 'maj7', '7th', 'm7', 'mM7', 'sus4', '7sus4', '6th', 'm6', 'aug', 'dim', 'dim7', 'm7(♭5)', 'add9', 'madd9', 'maj7(9)', '7(9)', 'm7(9)', '7(♯9)', 'maj7(13)', '7(13)', '7(♭13)', ''];
     var chordName = defChordName;
     const chordValue = {
       'M':[0,4,7,null,null],
       'm':[0,3,7,null,null],
-      'maj7':[0,4,7,0,null],
-      '7th':[0,4,7,9,null],
-      'm7':[0,3,7,9,null],
-      'mM7':[0,3,7,10,null],
+      'maj7':[0,4,7,11,null],
+      '7th':[0,4,7,10,null],
+      'm7':[0,3,7,10,null],
+      'mM7':[0,3,7,11,null],
       'sus4':[0,5,7,null,null],
-      '7sus4':[0,5,7,9,null],
+      '7sus4':[0,5,7,10,null],
       '6th':[0,4,7,9,null],
       'm6':[0,3,7,9,null],
       'aug':[0,4,8,null,null],
       'dim':[0,3,6,null,null],
-      'dim7':[1,4,7,10,null],
+      'dim7':[0,3,6,9,null],
       'm7(♭5)':[0,3,6,10,null],
       'add9':[0,2,4,7,null],
       'madd9':[0,2,3,7,null],
-      'maj7(9)':[0,2,4,7,10],
-      '7(9)':[0,2,4,7,9,10],
+      'maj7(9)':[0,2,4,7,11],
+      '7(9)':[0,2,4,7,10],
       'm7(9)':[0,2,3,7,10],
-      '7(♯9)':[0,3,4,7,10],
-      'maj7(13)':[0,4,7,9,11],
-      '7(13)':[0,4,7,9,10],
-      '7(♭13)':[0,4,7,8,10],
-      'none':[null,null,null,null,null]
+      '7(♯9)':[0,4,7,10,3], 
+      'maj7(13)':[0,4,7,11,9],
+      '7(13)':[0,4,7,10,9],
+      '7(♭13)':[0,4,7,10,8], 
+      '': [null,null,null,null,null] 
     };
     const chordNo = ['c01', 'c02', 'c03', 'c04', 'c05', 'c06', 'c07', 'c08', 'c09', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20', 'c21', 'c22', 'c23', 'c24'];
     const wKey = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
@@ -54,8 +54,8 @@
     }
   
     function fncResize() {
-      screenHeight = screen.height;
-      screenWidth = screen.width;
+      screenHeight = window.innerHeight;
+      screenWidth = window.innerWidth;
 
       if (screenHeight >= screenWidth) {
         screenHeight = window.innerHeight;
@@ -67,6 +67,14 @@
         es.style.width = Math.floor(screenWidth / 2) + 'px';
         es.style.top = Math.floor(screenHeight / 4) + 'px';
         es.style.left = Math.floor(screenWidth / 4) + 'px';
+
+        var ea = document.getElementById('about');
+        ea.style.position = 'fixed';
+        ea.style.height = '100%';
+        ea.style.width = '100%';
+        ea.style.top = '0px';
+        ea.style.left = '0px';
+
 
         var addBoxHeight = screenHeight;
         var addBoxWidth = Math.floor(screenWidth * 0.1);
@@ -163,11 +171,21 @@
           e.style.left = tempLeft + 'px';
           e.style.height = Math.floor(btnHeight * (6 / 10)) + 'px';
           e.style.width = Math.floor(btnWidth * (8 / 10)) + 'px';
-          e.style.lineHeight = e.style.height;
+          e.style.lineHeight = '1px';
           e.style.textAlign = 'center';
-          e.innerHTML = chordName[i - 1].replace('none', '');
           e.classList.add('rotated-text');
-          e.style.fontSize = Math.min(e.offsetWidth, e.offsetHeight) * 0.3 + 'px';
+          
+          if (i == 24) {
+            e.innerHTML = 'ABOUT/<br>PRIVACY';
+            const ratio = (i === 24) ? 0.2 : 0.3;
+            e.style.lineHeight = Math.min(e.offsetWidth, e.offsetHeight) * ratio + 'px';
+          }
+          else {
+            e.innerHTML = chordName[i - 1]; 
+          }
+
+          const ratio = (i === 24) ? 0.12 : 0.2; 
+          e.style.fontSize = Math.min(e.offsetWidth, e.offsetHeight) * ratio + 'px';
         }
       }
       else {
@@ -180,6 +198,13 @@
         es.style.width = Math.floor(screenWidth / 2) + 'px';
         es.style.top = Math.floor(screenHeight / 4) + 'px';
         es.style.left = Math.floor(screenWidth / 4) + 'px';
+
+        var ea = document.getElementById('about');
+        ea.style.position = 'fixed';
+        ea.style.height = '100%';
+        ea.style.width = '100%';
+        ea.style.top = '0px';
+        ea.style.left = '0px';
 
         var addBoxHeight = Math.floor(screenHeight * 0.1);
         var addBoxWidth = screenWidth;
@@ -230,12 +255,19 @@
           e.style.left = tempLeft + 'px';
           e.style.height = Math.floor(btnHeight * (8 / 10)) + 'px';
           e.style.width = Math.floor(btnWidth * (8 / 10)) + 'px';
-          e.style.lineHeight = e.style.height;
           e.style.textAlign = 'center';
 
           e.classList.remove('rotated-text');
-          e.innerHTML = chordName[i - 1];
-          e.style.fontSize = Math.min(e.offsetWidth, e.offsetHeight) * 0.4 + 'px';
+
+          if (i == 24) {
+            e.innerHTML = 'ABOUT/<br>PRIVACY';
+            const ratio = (i === 24) ? 0.2 : 0.3;
+            e.style.lineHeight = Math.min(e.offsetWidth, e.offsetHeight) * ratio + 'px';
+
+          }
+          else {
+            e.innerHTML = chordName[i - 1]; 
+          }
         }
 
         var wHeight = keyBoxHeight;
@@ -331,7 +363,7 @@
           continue;
         }
         osc[i] = audioCtx.createOscillator();
-        osc[i].type = 'sawtooth'; // 波形: sine, square, triangle, sawtooth など
+        osc[i].type = 'sawtooth'; //sine, square, triangle, sawtooth
         osc[i].frequency.value = frqList[notes[i]];
 
         osc[i].connect(gain);
@@ -374,11 +406,24 @@
           }
         }
     }
+
+    function showAboutPrivacy() {
+        document.getElementById('about').style.display = 'block';
+        document.getElementById('main').style.display = 'none';
+    }
+
+    function returnMain() {
+        document.getElementById('about').style.display = 'none';
+        document.getElementById('main').style.display = 'block';
+        fncResize();
+    }
   </script>
   <style>
     body {
       margin: 0;
       touch-action: pan-x pan-y;
+      background-color: #f0f0f0; 
+      font-family: Arial, sans-serif; 
     }
 
     .no_select {
@@ -442,11 +487,27 @@
     .rotated-text {
       transform: rotate(90deg);
     }
+    
+    .content-container { 
+      max-width: 800px; 
+      margin: 20px auto; 
+      padding: 20px; 
+      background-color: white; 
+      border-radius: 8px; 
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .content-container h2 {
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 5px;
+    }
+    .content-container ul, .content-container ol {
+      text-align: left;
+    }
   </style>
 </head>
 <body style="position:absolute; top:0px;left:0px;" onload="fncLoad()" onresize="fncResize()" class="no_select">
   <div id="start" style="display:block;">
-    <table border="0" height="100%" width="100%" style="position:related;">
+    <table border="0" height="100%" width="100%" style="position:relative;">
       <tr>
         <td align="center" valign="middle">
           This page has sound.
@@ -457,6 +518,16 @@
           <input type="button" value="OK" onclick="showMain()">
           <script>
             function showMain() {
+              const gain = audioCtx.createGain();
+              gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+              var osc = audioCtx.createOscillator();
+              osc.type = 'sawtooth';
+              osc.frequency.value = 440.00;
+              osc.connect(gain);
+              gain.connect(audioCtx.destination);
+              osc.start();
+              osc.stop(audioCtx.currentTime);
+              osc = null;
               document.getElementById('start').style.display = 'none';
               document.getElementById('main').style.display = 'block';
               fncResize();
@@ -465,6 +536,36 @@
         </td>
       </tr>
     </table>
+  </div>
+
+  <div id="about" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: scroll; background-color: #f0f0f0; z-index: 999;">
+    <div class="content-container">
+      <h2>このサイトについて</h2>
+      <p>このプロジェクトは、Webブラウザ上で動作するインタラクティブな和音キーボードです。インストールは不要で、スマートフォンやタブレットのタッチ操作に最適化されています。</p>
+      <p><strong>特徴:</strong></p>
+      <ul>
+        <li>**ブラウザで動作**: URLにアクセスするだけで、すぐに利用を開始できます。</li>
+        <li>**タッチ操作に最適化**: 画面の向き（縦/横）に合わせてレイアウトが自動で調整されます。</li>
+        <li>**様々な和音に対応**: 主要なコードからテンションコードまで、幅広い和音を簡単に試すことができます。</li>
+        <li>**シンプルなUI**: 直感的な操作で、音楽理論の知識がなくても楽しめます。</li>
+      </ul>
+      <p><strong>使い方:</strong></p>
+      <ol>
+        <li><strong>鍵盤をタッチ</strong>: 画面に表示されている鍵盤（白鍵、黒鍵）をタップして、ルート音を選択します。</li>
+        <li><strong>コードボタンをタッチ</strong>: 画面の端にあるコード名（M, m, maj7など）をタップして、鳴らしたい和音の種類を選びます。</li>
+        <li><strong>和音の演奏</strong>: 選択したルート音とコードの種類に合わせて、複数の音が同時に再生されます。</li>
+      </ol>
+      <hr>
+
+      <h2>プライバシーポリシー</h2>
+      <p>当サイトは、Googleによる広告サービス（Google AdSense）を利用しています。このような広告配信事業者は、ユーザーの興味に応じた商品やサービスの広告を表示するため、当サイトや他サイトへのアクセスに関する情報『Cookie』を使用することがあります。Cookieには、個人を特定できる情報は含まれていません。</p>
+      <p>また、お客様は、AdSense広告設定ページでパーソナライズ広告を無効にできます。</p>
+      <p>なお、当サイトに関するお問い合わせは、<a href="mailto:mimitasky.contact@gmail.com">mimitasky.contact@gmail.com</a> までお願いします。</p>
+
+      <p align="center" style="margin-top: 20px;">
+        <input type="button" value="ツールに戻る" onclick="returnMain()" style="padding: 10px 20px;">
+      </p>
+    </div>
   </div>
 
   <div id="main" style="display:none;">
@@ -494,8 +595,8 @@
       <div class="chord-btn" id="c21" data-note="c21"></div>
       <div class="chord-btn" id="c22" data-note="c22"></div>
       <div class="chord-btn" id="c23" data-note="c23"></div>
-      <div class="chord-btn" id="c24" data-note="c24" style="display:none;"></div>
-    </div>    
+      <div class="chord-btn" id="c24" data-note="c24"></div>
+    </div>
     <div id="key-box">
       <div class="white-key" id="C" data-note="C"></div>
       <div class="black-key" id="C#" data-note="C#"></div>
@@ -517,6 +618,11 @@
       key.addEventListener('touchstart', (e) => {
         const note = key.dataset.note;
         if (chordNo.indexOf(note) > -1) {
+          if (note == 'c24') {
+            showAboutPrivacy();
+            return;
+          }
+          
           if (selChord != '') {
             return;
           }
@@ -541,6 +647,11 @@
     document.querySelectorAll('.white-key, .black-key, .chord-btn').forEach(key => {
       key.addEventListener('touchend', (e) => {
         const note = key.dataset.note;
+        
+        if (note == 'c24') {
+            return;
+        }
+        
         if (chordNo.indexOf(note) > -1) {
           if (selChord != note) {
             return;
