@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="google-adsense-account" content="ca-pub-5703521516397879">
-  <title>CHORD</title>
+  <title>WEB CHORD KEYBOARD</title>
   <script>
     document.oncontextmenu = () => {
       return false;
@@ -49,10 +48,100 @@
     const allKey = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
     const frqList = [261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392.00, 415.30, 440.00, 466.16, 493.88];
 
-    function fncLoad() {
+    const about_jp = 
+      'WEB CHORD KEYBOARD は、ブラウザ上でコードと音をすばやく確認できるシンプルなツールです。'
+      + '<br>'
+      + 'インストールやアカウント登録は不要で、スマートフォンや PC からすぐに利用できます。'
+      + '<br>'
+      + '<br>'
+      + '演奏や作曲のアイデア出し、コードの確認、音のチェックなど、ちょっとした場面で気軽に使えることを目的に作られています。'
+      + '<br>'
+      + '<br>'
+      + 'このツールのソースコードは GitHub で公開しています。'
+      + 'https://github.com/mimitasky/mimitasky.github.io';
+
+    const privacy_jp = 
+      'このツールは、ユーザーの個人情報を一切収集しません。'
+      + '<br>'
+      + '入力されたキーやコード、操作内容はサーバーに送信されず、すべてブラウザ内で処理されます。'
+      + '<br>'
+      + '<br>'
+      + 'Cookie やアクセス解析ツールも使用していません。'
+      + '<br>'
+      + '<br>'
+      + '・個人情報の収集：なし'
+      + '<br>'
+      + '・外部へのデータ送信：なし'
+      + '<br>'
+      + '・アカウント登録：不要'
+      + '<br>'
+      + '・音声処理：すべて端末内で完結';
+
+    const about_en = 
+      'WEB CHORD KEYBOARD is a simple tool for quickly checking chords and sounds directly in your browser.'
+     + '<br>'
+     + 'No installation or account registration is required.'
+     + '<br>'
+     + 'You can use it immediately on both smartphones and PCs.'
+     + '<br>'
+     + '<br>'
+     + 'It is designed for quick tasks such as checking chord shapes, confirming notes, trying ideas for composition, or simply hearing how something sounds.'
+     + '<br>'
+     + '<br>'
+     + 'The source code for this tool is available on GitHub:'
+     + '<br>'
+     + 'https://github.com/mimitasky/mimitasky.github.io';
+
+    const privacy_en = 
+      'This tool does not collect any personal information.'
+     + '<br>'
+     + 'All key inputs, chord selections, and operations are processed entirely within your browser and are not sent to any server.'
+     + '<br>'
+     + '<br>'
+     + 'No cookies or analytics tools are used.'
+     + '<br>'
+     + '<br>'
+     + '• Personal data collected: none'
+     + '<br>'
+     + '• External data transmission: none'
+     + '<br>'
+     + '• Account registration: not required'
+     + '<br>'
+     + '• Audio processing: performed entirely on the user\'s device';
+
+    const userLangs = navigator.language || navigator.userLanguage;
+
+    function showMain() {
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+      var osc = audioCtx.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.value = 440.00;
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime);
+      osc = null;
+      document.getElementById('start').style.display = 'none';
+      document.getElementById('main').style.display = 'block';
       fncResize();
     }
-  
+
+    function fncLoad() {
+      const about = document.getElementById('about');
+      const privacy = document.getElementById('privacy');
+      if (userLangs.includes('ja') || userLangs.includes('ja-JP')) {
+        about.innerHTML = about_jp;
+        privacy.innerHTML = privacy_jp;
+      }
+      else {
+        about.innerHTML = about_en;
+        privacy.innerHTML = privacy_en;
+      }
+
+      fncResize();
+    }
+
     function fncResize() {
       screenHeight = window.innerHeight;
       screenWidth = window.innerWidth;
@@ -61,26 +150,30 @@
         screenHeight = window.innerHeight;
         screenWidth = window.innerWidth;
 
+/*
         var es = document.getElementById('start');
         es.style.position = 'fixed';
         es.style.height = Math.floor(screenHeight / 2) + 'px';
         es.style.width = Math.floor(screenWidth / 2) + 'px';
         es.style.top = Math.floor(screenHeight / 4) + 'px';
         es.style.left = Math.floor(screenWidth / 4) + 'px';
+*/
 
+        /*
         var ea = document.getElementById('about');
         ea.style.position = 'fixed';
         ea.style.height = '100%';
         ea.style.width = '100%';
         ea.style.top = '0px';
         ea.style.left = '0px';
-
+        */
 
         var addBoxHeight = screenHeight;
         var addBoxWidth = Math.floor(screenWidth * 0.1);
         var addBoxTop = 0;
         var addBoxLeft = screenWidth - addBoxWidth;
         screenWidth = window.innerWidth - addBoxWidth;
+        //document.getElementById('ttl').style.fontSize = Math.floor(addBoxWidth * 0.6) + 'px';
 
         document.getElementById('add-box').style.position = 'fixed';
         document.getElementById('add-box').style.top = addBoxTop + 'px';
@@ -88,8 +181,13 @@
         document.getElementById('add-box').style.height = addBoxHeight + 'px';
         document.getElementById('add-box').style.width = addBoxWidth + 'px';
 
-        var keyBoxHeight = Math.floor(screenHeight * 0.7);
-        var keyBoxWidth = screenWidth;
+        var nameBoxHeight = Math.floor(screenHeight * 0.5);
+        var nameBoxWidth = Math.floor(screenWidth * 0.4);
+        var nameBoxTop = 0;
+        var nameBoxLeft = screenWidth - nameBoxWidth;
+
+        var keyBoxHeight = Math.floor(screenHeight * 0.5);
+        var keyBoxWidth = screenWidth - nameBoxWidth;
         var keyBoxTop = 0;
         var keyBoxLeft = 0;
 
@@ -98,6 +196,12 @@
         var btnBoxTop = keyBoxHeight;
         var btnBoxLeft = 0;
         var btnColSize = 3;
+
+        document.getElementById('csn-box').style.position = 'fixed';
+        document.getElementById('csn-box').style.top = nameBoxTop + 'px';
+        document.getElementById('csn-box').style.left = nameBoxLeft + 'px';
+        document.getElementById('csn-box').style.height = nameBoxHeight + 'px';
+        document.getElementById('csn-box').style.width = nameBoxWidth + 'px';
 
         document.getElementById('key-box').style.position = 'fixed';
         document.getElementById('key-box').style.top = keyBoxTop + 'px';
@@ -141,6 +245,8 @@
           e.style.left = '0px';
           e.style.height = wHeight[i] + 'px';
           e.style.width = wWidth + 'px';
+          e.classList.remove('white-key-h');
+          e.classList.add('white-key-v');
           tempTop = tempTop + wHeight[i];
         }
 
@@ -156,11 +262,12 @@
 
         btnHeight = Math.floor(btnBoxHeight / (chordNo.length / btnColSize));
         btnWidth = Math.floor(btnBoxWidth / btnColSize);
-        btnHeight = Math.floor(btnBoxHeight / btnColSize);
-        btnWidth = Math.floor(btnBoxWidth / (chordNo.length / btnColSize));
+        btnHeight = Math.floor(btnBoxHeight / btnColSize) - 2;
+        btnWidth = Math.floor(btnBoxWidth / (chordNo.length / btnColSize)) - 2;
 
         for (i = 1; i <= chordName.length; i++) {
           var e = document.getElementById('c' + String(i).padStart(2, '0'));
+          var en = document.getElementById('cn' + String(i).padStart(2, '0'));
           var tempTop = 0;
           var tempLeft = btnBoxWidth - btnWidth;
 
@@ -169,45 +276,82 @@
           tempLeft = btnBoxWidth - (btnWidth * (Math.floor((i - 1) / btnColSize) + 1));
           e.style.top = tempTop + 'px';
           e.style.left = tempLeft + 'px';
-          e.style.height = Math.floor(btnHeight * (6 / 10)) + 'px';
+          e.style.height = Math.floor(btnHeight * (8 / 10)) + 'px';
           e.style.width = Math.floor(btnWidth * (8 / 10)) + 'px';
           e.style.lineHeight = '1px';
+          /*
+          e.style.display = 'flex';
           e.style.textAlign = 'center';
-          e.classList.add('rotated-text');
-          
+          e.style.alignItems = 'center';
+          e.style.justifyContent = 'center';
+          */
+          //e.classList.add('rotated-text');
+
+          /*
           if (i == 24) {
-            e.innerHTML = 'ABOUT/<br>PRIVACY';
-            const ratio = (i === 24) ? 0.2 : 0.3;
-            e.style.lineHeight = Math.min(e.offsetWidth, e.offsetHeight) * ratio + 'px';
+            en.innerHTML = 'ABOUT/<br>PRIVACY';
+            //const ratio = (i === 24) ? 0.2 : 0.3;
+            //e.style.lineHeight = Math.min(e.offsetWidth, e.offsetHeight) * ratio + 'px';
           }
           else {
-            e.innerHTML = chordName[i - 1]; 
+            en.innerHTML = chordName[i - 1]; 
+            //e.innerHTML = '<span class="rotated-text">' + chordName[i - 1] + '</span>';
+          }
+          */
+          if (chordName[i - 1] != '') {
+            e.style.visibility = 'visible';
+            en.style.visibility = 'visible';
+            en.innerHTML = chordName[i - 1]; 
+          }
+          else {
+            e.style.visibility = 'hidden';
+            en.style.visibility = 'hidden';
           }
 
-          const ratio = (i === 24) ? 0.12 : 0.2; 
-          e.style.fontSize = Math.min(e.offsetWidth, e.offsetHeight) * ratio + 'px';
+          en.classList.add('rotated-text');
+
+
+          //const ratio = (i === 24) ? 0.12 : 0.2; 
+          //e.style.fontSize = Math.min(e.offsetWidth, e.offsetHeight) * ratio + 'px';
+
+          //e.style.fontSize = clamp('12px, 3vw, 26px');
         }
+
+        const ttl = document.getElementById('ttl');
+        const addH = addBoxHeight;
+        ttl.classList.add('rotated-text');
+        ttl.style.fontSize = Math.floor(addH * 0.04) + 'px';
+        ttl.style.position = 'absolute';
+        ttl.style.top = '25%';
+        ttl.style.left = '50%';
+        ttl.style.transform = 'translate(-50%, -50%) rotate(90deg)';
+
+        document.getElementById('csn').classList.add('rotated-text');
       }
       else {
         screenHeight = Math.floor(window.innerHeight * 0.98);
         screenWidth = window.innerWidth;
 
+/*
         var es = document.getElementById('start');
         es.style.position = 'fixed';
         es.style.height = Math.floor(screenHeight / 2) + 'px';
         es.style.width = Math.floor(screenWidth / 2) + 'px';
         es.style.top = Math.floor(screenHeight / 4) + 'px';
         es.style.left = Math.floor(screenWidth / 4) + 'px';
+*/
 
+        /*
         var ea = document.getElementById('about');
         ea.style.position = 'fixed';
         ea.style.height = '100%';
         ea.style.width = '100%';
         ea.style.top = '0px';
         ea.style.left = '0px';
+        */
 
         var addBoxHeight = Math.floor(screenHeight * 0.1);
-        var addBoxWidth = screenWidth;
+        var addBoxWidth = Math.floor(screenWidth * 0.5);
         var addBoxTop = 0;
         var addBoxLeft = 0;
 
@@ -216,18 +360,28 @@
         document.getElementById('add-box').style.left = addBoxLeft + 'px';
         document.getElementById('add-box').style.height = addBoxHeight + 'px';
         document.getElementById('add-box').style.width = addBoxWidth + 'px';
-        screenHeight = screenHeight - addBoxHeight;
 
-        var keyBoxHeight = screenHeight;
-        var keyBoxWidth = Math.floor(screenWidth * 0.7);
-        var keyBoxTop = addBoxHeight;
+        var nameBoxHeight = Math.floor((screenHeight - addBoxHeight) * 0.4);
+        var nameBoxWidth = Math.floor(screenWidth * 0.5);
+        var nameBoxTop = addBoxHeight;
+        var nameBoxLeft = 0;
+
+        var keyBoxHeight = screenHeight - addBoxHeight -  nameBoxHeight;
+        var keyBoxWidth = Math.floor(screenWidth * 0.5);
+        var keyBoxTop = addBoxHeight + nameBoxHeight;
         var keyBoxLeft = 0;
 
-        var btnBoxHeight = screenHeight;
+        var btnBoxHeight = screenHeight - addBoxHeight;
         var btnBoxWidth = screenWidth - keyBoxWidth;
-        var btnBoxTop = addBoxHeight;
+        var btnBoxTop = addBoxHeight
         var btnBoxLeft = keyBoxWidth;
         var btnColSize = 3;
+
+        document.getElementById('csn-box').style.position = 'fixed';
+        document.getElementById('csn-box').style.top = nameBoxTop + 'px';
+        document.getElementById('csn-box').style.left = nameBoxLeft + 'px';
+        document.getElementById('csn-box').style.height = nameBoxHeight + 'px';
+        document.getElementById('csn-box').style.width = nameBoxWidth + 'px';
 
         document.getElementById('key-box').style.position = 'fixed';
         document.getElementById('key-box').style.top = keyBoxTop + 'px';
@@ -246,6 +400,7 @@
 
         for (i = 1; i <= chordName.length; i++) {
           var e = document.getElementById('c' + String(i).padStart(2, '0'));
+          var en = document.getElementById('cn' + String(i).padStart(2, '0'));
           var tempTop = Math.floor((i - 1) / btnColSize) * btnHeight;
           var tempLeft = ((  (i - 1) % btnColSize  ) * btnWidth) + Math.floor(btnWidth * (1 / 10));
 
@@ -255,19 +410,40 @@
           e.style.left = tempLeft + 'px';
           e.style.height = Math.floor(btnHeight * (8 / 10)) + 'px';
           e.style.width = Math.floor(btnWidth * (8 / 10)) + 'px';
+          /*
+          e.style.display = 'flex';
           e.style.textAlign = 'center';
+          e.style.alignItems = 'center';
+          e.style.justifyContent = 'center';
+          */
 
-          e.classList.remove('rotated-text');
+          //e.classList.remove('rotated-text');
 
+          /*
           if (i == 24) {
-            e.innerHTML = 'ABOUT/<br>PRIVACY';
-            const ratio = (i === 24) ? 0.2 : 0.3;
-            e.style.lineHeight = Math.min(e.offsetWidth, e.offsetHeight) * ratio + 'px';
+            en.innerHTML = 'ABOUT/<br>PRIVACY';
+            //const ratio = (i === 24) ? 0.2 : 0.3;
+            //e.style.lineHeight = Math.min(e.offsetWidth, e.offsetHeight) * ratio + 'px';
 
           }
           else {
-            e.innerHTML = chordName[i - 1]; 
+            en.innerHTML = chordName[i - 1];
+            //e.innerHTML = '<span class="rotated-text">' + chordName[i - 1] + '</span>';
           }
+          */
+          if (chordName[i - 1] != '') {
+            e.style.visibility = 'visible';
+            en.style.visibility = 'visible';
+            en.innerHTML = chordName[i - 1]; 
+          }
+          else {
+            e.style.visibility = 'hidden';
+            en.style.visibility = 'hidden';
+          }
+
+          en.classList.remove('rotated-text');
+
+          //e.style.fontSize = clamp('10px, 2.5vw, 22px');
         }
 
         var wHeight = keyBoxHeight;
@@ -300,6 +476,8 @@
           e.style.left = tempLeft + 'px';
           e.style.height = wHeight + 'px';
           e.style.width = wWidth[i] + 'px';
+          e.classList.remove('white-key-v');
+          e.classList.add('white-key-h');
           tempLeft = tempLeft + wWidth[i];
         }
 
@@ -312,6 +490,16 @@
           eb.style.height = bHeight + 'px';
           eb.style.width = (Math.floor(wWidth[0] / 2)) + 'px';
         }
+
+        const ttl = document.getElementById('ttl');
+        ttl.classList.remove('rotated-text');
+        ttl.style.position = 'absolute';
+        ttl.style.left = '5%'; // 左寄せ（必要なら微調整）
+        ttl.style.top = '50%';
+        ttl.style.transform = 'translateY(-50%)';
+        ttl.style.fontSize = '';
+
+        document.getElementById('csn').classList.remove('rotated-text');
       }
     }
 
@@ -322,6 +510,7 @@
     var osc = [null, null, null, null, null, null];
 
     function playNote(key, chord) {
+
       if (key == '') {
         return;
       }
@@ -335,9 +524,11 @@
       }
 
       var notes = [];
+      var cName = '';
       for (i = 0; i < chordNo.length; i++) {
         if (chord == chordNo[i]) {
           notes = getNoteSets(i);
+          cName = chordName[i];
           break;
         }
       }
@@ -346,13 +537,44 @@
         notes = [0];
       }
 
+      var nName = '';
       for (i = 0; i < notes.length; i++) {
-        notes[i] = getNote(notes[i] + keyIdx);
+        if (notes[i] == null) {
+          continue;
+        }
+
+        notes[i] = getNote(parseInt(notes[i]) + keyIdx);
+
+        let noteName = allKey[notes[i]];
+        if (nName == '') {
+          nName = noteName;
+        }
+        else {
+          nName = nName + ',' + noteName;
+        }
+      }
+      if (notes.length < 2) {
+        nName = '';
+      }
+
+      var keyAndCode = key + cName;
+      for (i = 0; i < chordValue[cName].length; i++) {
+        if (chordValue[cName][i] == null) {
+          continue;
+        }
       }
 
       const gain = audioCtx.createGain();
 
-      gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+      var gainVal = 1.0;
+      gainVal = gainVal / notes.length;
+      if (gainVal == 1) {
+        gainVal = 0.6;
+      }
+      gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+      const fost = audioCtx.currentTime;
+      const fod = 2;
+      gain.gain.exponentialRampToValueAtTime(0.001, fost + fod);
 
       for (i = 0; i < notes.length; i++) {
         if (osc[i] != null) {
@@ -371,6 +593,14 @@
 
         osc[i].start();
       }
+
+      if (nName != '') {
+        keyAndCode = keyAndCode + '<br>' + nName;
+      }
+      else {
+        keyAndCode = keyAndCode + '<br>&nbsp;';
+      }
+      document.getElementById('csn').innerHTML = keyAndCode;
     }
 
     function getNoteSets(idx) {
@@ -394,29 +624,40 @@
     }
 
     function doEvent(isStart) {
+        for (i = 0; i < osc.length; i++) {
+          if (osc[i] != null) {
+            osc[i].stop(0, 5);
+            osc[i] = null;
+          }
+        }
         if (isStart) {
           playNote(selKey, selChord);
         }
-        else {
-          for (i = 0; i < osc.length; i++) {
-            if (osc[i] != null) {
-              osc[i].stop(audioCtx.currentTime);
-              osc[i] = null;
-            }
-          }
-        }
+        //else {
+        //  for (i = 0; i < osc.length; i++) {
+        //    if (osc[i] != null) {
+        //      osc[i].stop(0, 5);
+        //      //osc[i].stop(fost + fod + 0.1);
+        //      osc[i] = null;
+        //    }
+        //  }
+        //}
     }
 
+    /*
     function showAboutPrivacy() {
         document.getElementById('about').style.display = 'block';
         document.getElementById('main').style.display = 'none';
     }
+    */
 
+    /*
     function returnMain() {
         document.getElementById('about').style.display = 'none';
         document.getElementById('main').style.display = 'block';
         fncResize();
     }
+    */
   </script>
   <style>
     body {
@@ -433,9 +674,112 @@
       -ms-user-select: none;
     }
 
+#start {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.start-container {
+  width: 94%;
+  max-width: 700px;
+  height: calc(100% - 20px);
+  background: white;
+  border-radius: 10px;
+  padding: 14px 16px;   /* ← 余白を少し減らす */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.start-sound {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.start-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.start-scroll h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+}
+
+.start-ok {
+  padding: 10px 24px;
+  font-size: 16px;
+  align-self: center;
+}
+
+@media (orientation: landscape) {
+  .start-screen {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .message-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  .scroll-area {
+    margin-top: 60px;
+    margin-bottom: 60px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .ok-button {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+}
+
+    #add-box {
+      align-items: center;
+      justify-content: center;
+      text-align: left;
+    }
+
+    #csn-box {
+      z-index: 1;
+      border: 1px solid black;
+      display: flex;
+      align-items: center;      /* 縦中央 */
+      justify-content: center;  /* 横中央 */
+      text-align: center;
+    }
+
+    #csn {
+      font-size: clamp(14px, 6vw, 32px);
+      line-height: 1.2;
+    }
+
     #btn-box {
       z-index: 1;
-      border-bottom-left-bottom-right: 0px;
+      border: 1px solid black;
     }
 
     #key-box {
@@ -443,11 +787,16 @@
       border-bottom-left-bottom-right: 0px;
     }
 
+    #ttl {
+      font-size: clamp(14px, 4vw, 28px);
+      display: inline-block;
+    }
+
     .chord-btn {
       background-color:#e0e0e0;
       color: #333;
       padding: 2px 2px;
-      border: none;
+      border: 1px solid black;
       border-radius: 6px;
       font-size: initial;
       overflow: hidden;
@@ -455,10 +804,12 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.6),
         0 4px 6px rgba(0, 0, 0, 0.1),
         0 1px 3px rgba(0, 0, 0, 0.08);
+      display: block;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
+      font-size: clamp(10px, 2.5vw, 22px);
     }
 
     .white-key {
@@ -466,12 +817,28 @@
       border: 1px solid black;
       z-index: 2;
       box-sizing: border-box;
+      /*
       border-bottom-left-radius: 6px;
       border-bottom-right-radius: 6px;
+      */
       box-shadow: 
         inset 0 1px 0 rgba(255, 255, 255, 0.6),
         0 4px 6px rgba(0, 0, 0, 0.1),
         0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .white-key-h {
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+
+    .white-key-v {
+      border-top-left-radius: 6px;
+      border-top-right-radius: 0px;
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 0px;
     }
 
     .black-key {
@@ -483,9 +850,12 @@
         0 4px 6px rgba(0, 0, 0, 0.1),
         0 1px 3px rgba(0, 0, 0, 0.08);
     }
-
+    
     .rotated-text {
-      transform: rotate(90deg);
+      display: inline-block;
+      transform: rotate(90deg); 
+      transform-origin: center center;
+      white-space: nowrap;
     }
     
     .content-container { 
@@ -506,11 +876,22 @@
   </style>
 </head>
 <body style="position:absolute; top:0px;left:0px;" onload="fncLoad()" onresize="fncResize()" class="no_select">
+  <!--
   <div id="start" style="display:block;">
-    <table border="0" height="100%" width="100%" style="position:relative;">
+    <table border="1" height="100%" width="100%" style="position:relative;">
       <tr>
         <td align="center" valign="middle">
           This page has sound.
+        </td>
+      </tr>
+      <tr>
+        <td align="center" valign="middle">
+          <div id="about">about</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="center" valign="middle">
+          <div id="privacy">privacy</div>
         </td>
       </tr>
       <tr>
@@ -537,65 +918,70 @@
       </tr>
     </table>
   </div>
+  -->
+<div id="start">
+  <div class="start-container">
 
+    <div class="start-sound">WEB CHORD KEYBOARD</div>
+    <div class="start-sound">This page has sound.</div>
+
+    <div class="start-scroll" id="about-scroll">
+      <h3>ABOUT</h3>
+      <div id="about"></div>
+    </div>
+
+    <div class="start-scroll" id="privacy-scroll">
+      <h3>PRIVACY</h3>
+      <div id="privacy"></div>
+    </div>
+
+    <button class="start-ok" onclick="showMain()">OK</button>
+
+  </div>
+</div>
+
+  <!--
   <div id="about" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: scroll; background-color: #f0f0f0; z-index: 999;">
     <div class="content-container">
-      <h2>このサイトについて</h2>
-      <p>このプロジェクトは、Webブラウザ上で動作するインタラクティブな和音キーボードです。インストールは不要で、スマートフォンやタブレットのタッチ操作に最適化されています。</p>
-      <p><strong>特徴:</strong></p>
-      <ul>
-        <li>**ブラウザで動作**: URLにアクセスするだけで、すぐに利用を開始できます。</li>
-        <li>**タッチ操作に最適化**: 画面の向き（縦/横）に合わせてレイアウトが自動で調整されます。</li>
-        <li>**様々な和音に対応**: 主要なコードからテンションコードまで、幅広い和音を簡単に試すことができます。</li>
-        <li>**シンプルなUI**: 直感的な操作で、音楽理論の知識がなくても楽しめます。</li>
-      </ul>
-      <p><strong>使い方:</strong></p>
-      <ol>
-        <li><strong>鍵盤をタッチ</strong>: 画面に表示されている鍵盤（白鍵、黒鍵）をタップして、ルート音を選択します。</li>
-        <li><strong>コードボタンをタッチ</strong>: 画面の端にあるコード名（M, m, maj7など）をタップして、鳴らしたい和音の種類を選びます。</li>
-        <li><strong>和音の演奏</strong>: 選択したルート音とコードの種類に合わせて、複数の音が同時に再生されます。</li>
-      </ol>
-      <hr>
-
-      <h2>プライバシーポリシー</h2>
-      <p>当サイトは、Googleによる広告サービス（Google AdSense）を利用しています。このような広告配信事業者は、ユーザーの興味に応じた商品やサービスの広告を表示するため、当サイトや他サイトへのアクセスに関する情報『Cookie』を使用することがあります。Cookieには、個人を特定できる情報は含まれていません。</p>
-      <p>また、お客様は、AdSense広告設定ページでパーソナライズ広告を無効にできます。</p>
-      <p>なお、当サイトに関するお問い合わせは、<a href="mailto:sora.mimita.sky@gmail.com">sora.mimita.sky.@gmail.com</a> までお願いします。</p>
-
       <p align="center" style="margin-top: 20px;">
         <input type="button" value="ツールに戻る" onclick="returnMain()" style="padding: 10px 20px;">
       </p>
     </div>
   </div>
+  -->
 
   <div id="main" style="display:none;">
     <div id="add-box">
+      <span id="ttl">WEB CHORD KEYBOARD</span>
+    </div>
+    <div id="csn-box">
+      <span id="csn"></span>
     </div>
     <div id="btn-box">
-      <div class="chord-btn" id="c01" data-note="c01"></div>
-      <div class="chord-btn" id="c02" data-note="c02"></div>
-      <div class="chord-btn" id="c03" data-note="c03"></div>
-      <div class="chord-btn" id="c04" data-note="c04"></div>
-      <div class="chord-btn" id="c05" data-note="c05"></div>
-      <div class="chord-btn" id="c06" data-note="c06"></div>
-      <div class="chord-btn" id="c07" data-note="c07"></div>
-      <div class="chord-btn" id="c08" data-note="c08"></div>
-      <div class="chord-btn" id="c09" data-note="c09"></div>
-      <div class="chord-btn" id="c10" data-note="c10"></div>
-      <div class="chord-btn" id="c11" data-note="c11"></div>
-      <div class="chord-btn" id="c12" data-note="c12"></div>
-      <div class="chord-btn" id="c13" data-note="c13"></div>
-      <div class="chord-btn" id="c14" data-note="c14"></div>
-      <div class="chord-btn" id="c15" data-note="c15"></div>
-      <div class="chord-btn" id="c16" data-note="c16"></div>
-      <div class="chord-btn" id="c17" data-note="c17"></div>
-      <div class="chord-btn" id="c18" data-note="c18"></div>
-      <div class="chord-btn" id="c19" data-note="c19"></div>
-      <div class="chord-btn" id="c20" data-note="c20"></div>
-      <div class="chord-btn" id="c21" data-note="c21"></div>
-      <div class="chord-btn" id="c22" data-note="c22"></div>
-      <div class="chord-btn" id="c23" data-note="c23"></div>
-      <div class="chord-btn" id="c24" data-note="c24"></div>
+      <div class="chord-btn" id="c01" data-note="c01"><span id="cn01"></span></div>
+      <div class="chord-btn" id="c02" data-note="c02"><span id="cn02"></span></div>
+      <div class="chord-btn" id="c03" data-note="c03"><span id="cn03"></span></div>
+      <div class="chord-btn" id="c04" data-note="c04"><span id="cn04"></span></div>
+      <div class="chord-btn" id="c05" data-note="c05"><span id="cn05"></span></div>
+      <div class="chord-btn" id="c06" data-note="c06"><span id="cn06"></span></div>
+      <div class="chord-btn" id="c07" data-note="c07"><span id="cn07"></span></div>
+      <div class="chord-btn" id="c08" data-note="c08"><span id="cn08"></span></div>
+      <div class="chord-btn" id="c09" data-note="c09"><span id="cn09"></span></div>
+      <div class="chord-btn" id="c10" data-note="c10"><span id="cn10"></span></div>
+      <div class="chord-btn" id="c11" data-note="c11"><span id="cn11"></span></div>
+      <div class="chord-btn" id="c12" data-note="c12"><span id="cn12"></span></div>
+      <div class="chord-btn" id="c13" data-note="c13"><span id="cn13"></span></div>
+      <div class="chord-btn" id="c14" data-note="c14"><span id="cn14"></span></div>
+      <div class="chord-btn" id="c15" data-note="c15"><span id="cn15"></span></div>
+      <div class="chord-btn" id="c16" data-note="c16"><span id="cn16"></span></div>
+      <div class="chord-btn" id="c17" data-note="c17"><span id="cn17"></span></div>
+      <div class="chord-btn" id="c18" data-note="c18"><span id="cn18"></span></div>
+      <div class="chord-btn" id="c19" data-note="c19"><span id="cn19"></span></div>
+      <div class="chord-btn" id="c20" data-note="c20"><span id="cn20"></span></div>
+      <div class="chord-btn" id="c21" data-note="c21"><span id="cn21"></span></div>
+      <div class="chord-btn" id="c22" data-note="c22"><span id="cn22"></span></div>
+      <div class="chord-btn" id="c23" data-note="c23"><span id="cn23"></span></div>
+      <div class="chord-btn" id="c24" data-note="c24"><span id="cn24"></span></div>
     </div>
     <div id="key-box">
       <div class="white-key" id="C" data-note="C"></div>
@@ -618,10 +1004,10 @@
       key.addEventListener('touchstart', (e) => {
         const note = key.dataset.note;
         if (chordNo.indexOf(note) > -1) {
-          if (note == 'c24') {
-            showAboutPrivacy();
-            return;
-          }
+          //if (note == 'c24') {
+          //  showAboutPrivacy();
+          //  return;
+          //}
           
           if (selChord != '') {
             return;
