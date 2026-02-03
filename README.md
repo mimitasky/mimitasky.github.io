@@ -1,31 +1,44 @@
-# Web Chord Keyboard
+# WEB CHORD KEYBOARD
 
-## 概要
+👉 Try it now: https://mimitasky.github.io/
 
-このプロジェクトは、Webブラウザ上で動作するインタラクティブな和音キーボードです。
-インストールは不要で、スマートフォンやタブレットのタッチ操作に最適化されています。
+A simple, fast chord keyboard that runs entirely in your browser.
 
-## 特徴
+No installation. No plugins. Just open and play.
 
-- **ブラウザで動作**: URLにアクセスするだけで、すぐに利用を開始できます。
-- **タッチ操作に最適化**: 画面の向き（縦/横）に合わせてレイアウトが自動で調整されます。
-- **様々な和音に対応**: 主要なコードからテンションコードまで、幅広い和音を簡単に試すことができます。
-- **シンプルなUI**: 直感的な操作で、音楽理論の知識がなくても楽しめます。
+Perfect for quick chord checks, sketching ideas, and testing harmonies anytime.
 
-## 使い方
+## Features
 
-1.  **鍵盤をタッチ**: 画面に表示されている鍵盤（白鍵、黒鍵）をタップして、ルート音を選択します。
-2.  **コードボタンをタッチ**: 画面の端にあるコード名（M, m, maj7など）をタップして、鳴らしたい和音の種類を選びます。
-3.  **和音の演奏**: 選択したルート音とコードの種類に合わせて、複数の音が同時に再生されます。
+- Play chords instantly with tap or click
+- 24 chord types × 12 keys
+- Works on both desktop and mobile
+- Responsive layout (portrait / landscape)
+- Works offline after first load
+- 100% client-side (Web Audio API)
 
-## 動作環境
+## Privacy
 
-最新のWeb Audio APIに対応した主要なモダンブラウザ（Chrome, Firefox, Safariなど）で動作します。
+Everything runs locally in your browser.
 
-## ライセンス
+- No server  
+- No data collection  
+- No cookies  
+- No analytics  
+- No tracking  
 
-このプロジェクトは[MITライセンス](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt)のもとで公開されています。
+## Why?
 
-## 運営について
+I wanted a lightweight chord tool that opens instantly, without apps, logins, or setup.  
+So I built one with pure JavaScript.
 
-このツールは、広告収入によって運営されています。皆さまに快適にご利用いただけるよう、広告はツールの操作を妨げない場所に表示しています。
+## Source Code
+
+https://github.com/mimitasky/mimitasky.github.io
+
+## Author
+
+mimitasky  
+Solo developer building small, quiet, ergonomic tools.
+
+Feel free to share feedback or ideas!
