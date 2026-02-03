@@ -478,16 +478,15 @@
       }
 
       const gain = audioCtx.createGain();
-
-      let gainVal = 1.0;
-      gainVal = gainVal / notes.length;
-      if (gainVal == 1) {
-        gainVal = 0.6;
+      let gainVal = 0.15;
+      if (notes.length > 1) gainVal = 0.4 /  notes.length;
+      if (gainVal > 0.3) {
+        gainVal = 0.3;
       }
-      gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
-      const fost = audioCtx.currentTime;
-      const fod = 0.5;
-      gain.gain.exponentialRampToValueAtTime(0.001, fost + fod);
+
+      gain.gain.setValueAtTime(0, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(gainVal, audioCtx.currentTime + 0.01);
+
 
       for (let i = 0; i < notes.length; i++) {
         if (osc[i] != null) {
@@ -537,20 +536,26 @@
     }
 
     function doEvent(isStart) {
-        for (let i = 0; i < osc.length; i++) {
-          if (osc[i] != null) {
-            osc[i].stop(0, 5);
-            osc[i] = null;
-          }
+      const fadeTime = audioCtx.currentTime + 0.015;
+
+      for (let i = 0; i < osc.length; i++) {
+        if (osc[i] != null) {
+          try {
+            osc[i].stop(fadeTime);
+          } catch(e) {}
+          osc[i] = null;
         }
-        if (isStart) {
-          playNote(selKey, selChord);
-        }
+      }
+
+      if (isStart) {
+        playNote(selKey, selChord);
+      }
     }
   </script>
   <style>
     body {
       margin: 0;
+      overscroll-behavior-y: none;
       touch-action: pan-x pan-y;
       background-color: #f0f0f0; 
       font-family: Arial, sans-serif; 
@@ -834,6 +839,8 @@
   <script>
     document.querySelectorAll('.white-key, .black-key, .chord-btn').forEach(key => {
       key.addEventListener('touchstart', (e) => {
+        if (e.cancelable) e.preventDefault();
+
         const note = key.dataset.note;
         if (chordNo.indexOf(note) > -1) {
           if (selChord != '') {
@@ -859,8 +866,9 @@
 
     document.querySelectorAll('.white-key, .black-key, .chord-btn').forEach(key => {
       key.addEventListener('touchend', (e) => {
-        const note = key.dataset.note;
+        if (e.cancelable) e.preventDefault();
 
+        const note = key.dataset.note;
         if (chordNo.indexOf(note) > -1) {
           if (selChord != note) {
             return;
