@@ -46,7 +46,9 @@
     const about_jp = 
       'WEB CHORD KEYBOARD は、ブラウザ上でコードと音をすばやく確認できるシンプルなツールです。'
       + '<br>'
-      + 'インストールやアカウント登録は不要で、スマートフォンや PC からすぐに利用できます。'
+      + 'インストールやアカウント登録は不要で、ブラウザで開くだけですぐに使えます。'
+      + '<br>'
+      + '※コード演奏はタッチ操作専用です。'
       + '<br>'
       + '<br>'
       + '演奏や作曲のアイデア出し、コードの確認、音のチェックなど、ちょっとした場面で気軽に使えることを目的に作られています。'
@@ -77,7 +79,7 @@
      + '<br>'
      + 'No installation or account registration is required.'
      + '<br>'
-     + 'You can use it immediately on both smartphones and PCs.'
+     + 'Open it in your browser and start playing instantly.'
      + '<br>'
      + '<br>'
      + 'It is designed for quick tasks such as checking chord shapes, confirming notes, trying ideas for composition, or simply hearing how something sounds.'
@@ -123,6 +125,20 @@
     }
 
     function fncLoad() {
+      if (navigator.maxTouchPoints < 2) {
+        const notice = document.createElement('div');
+        notice.style = "font-size: 12px; color: #666; text-align: center; margin-bottom: 10px;";
+
+        if (userLangs.includes('ja')) {
+          notice.innerText = "※マウス操作では単音のみ再生できます。コード演奏はタッチ端末をご利用ください。";
+        } else {
+          notice.innerText = "Mouse: single notes only. Use a touch device to play full chords.";
+        }
+
+        const startBtn = document.querySelector('.start-ok');
+        startBtn.parentNode.insertBefore(notice, startBtn);
+      }
+
       const about = document.getElementById('about');
       const privacy = document.getElementById('privacy');
       if (userLangs.includes('ja') || userLangs.includes('ja-JP')) {
@@ -837,19 +853,27 @@
   </div>
 
   <script>
-    document.querySelectorAll('.white-key, .black-key, .chord-btn').forEach(key => {
-      key.addEventListener('touchstart', (e) => {
-        if (e.cancelable) e.preventDefault();
+    let isTouch = false;
 
-        const note = key.dataset.note;
-        if (chordNo.indexOf(note) > -1) {
+    function doTouch(isStart, note) {
+      if (chordNo.indexOf(note) > -1) {
+        if (isStart) {
           if (selChord != '') {
             return;
           }
           selChord = note;
           document.getElementById(note).style.backgroundColor = '#fff0f5';
         }
-        else if (allKey.indexOf(note) > -1) {
+        else {
+          if (selChord != note) {
+            return;
+          }
+          selChord = "";
+          document.getElementById(note).style.backgroundColor = '#e0e0e0';
+        }
+      }
+      else if (allKey.indexOf(note) > -1) {
+        if (isStart) {
           if (selKey != '') {
             return;
           }
@@ -858,25 +882,6 @@
           document.getElementById(note).style.border = '0px';
         }
         else {
-          return;
-        }
-        doEvent(true);
-      });
-    });
-
-    document.querySelectorAll('.white-key, .black-key, .chord-btn').forEach(key => {
-      key.addEventListener('touchend', (e) => {
-        if (e.cancelable) e.preventDefault();
-
-        const note = key.dataset.note;
-        if (chordNo.indexOf(note) > -1) {
-          if (selChord != note) {
-            return;
-          }
-          selChord = "";
-          document.getElementById(note).style.backgroundColor = '#e0e0e0';
-        }
-        else if (allKey.indexOf(note) > -1) {
           if (selKey != note) {
             return;
           }
@@ -889,10 +894,56 @@
             document.getElementById(note).style.border = '1px solid black';
           }
         }
-        else {
+      }
+      else {
           return;
-        }
-        doEvent(false);
+      }
+
+      doEvent(isStart);
+    }
+
+    document.querySelectorAll('.white-key, .black-key, .chord-btn').forEach(key => {
+      key.addEventListener('touchstart', (e) => {
+        if (e.cancelable) e.preventDefault();
+
+        isTouch = true;
+        doTouch(true, key.dataset.note);
+      });
+    });
+
+    document.querySelectorAll('.white-key, .black-key').forEach(key => {
+      key.addEventListener('mousedown', (e) => {
+        if (isTouch) return;
+
+        if (e.cancelable) e.preventDefault();
+
+        doTouch(true, key.dataset.note);
+      });
+    });
+
+    document.querySelectorAll('.white-key, .black-key, .chord-btn').forEach(key => {
+      key.addEventListener('touchend', (e) => {
+        if (e.cancelable) e.preventDefault();
+
+        isTouch = false;
+        doTouch(false, key.dataset.note);
+      });
+    });
+
+    document.querySelectorAll('.white-key, .black-key').forEach(key => {
+      key.addEventListener('mouseup', (e) => {
+        if (isTouch) return;
+
+        if (e.cancelable) e.preventDefault();
+
+        doTouch(false, key.dataset.note);
+      });
+    });
+
+    document.querySelectorAll('.white-key, .black-key').forEach(key => {
+      key.addEventListener('mouseleave', (e) => {
+        if (isTouch) return;
+        doTouch(false, key.dataset.note);
       });
     });
 
