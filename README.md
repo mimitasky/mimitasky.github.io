@@ -11,8 +11,10 @@ Perfect for quick chord checks, sketching ideas, and testing harmonies anytime.
 ## Features
 
 - Play chords instantly with tap or click
-- 24 chord types × 12 keys
-- Works on both desktop and mobile
+- 23 chord types × 12 keys
+- Runs in any modern browser (desktop and mobile)
+  - Multi-touch is recommended for full chord play
+  - Mouse input supports single notes only
 - Responsive layout (portrait / landscape)
 - Works offline after first load
 - 100% client-side (Web Audio API)
